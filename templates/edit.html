@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit Expense</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-slate-950 px-4 py-10 text-slate-100">
+<main class="mx-auto max-w-xl rounded-2xl border border-slate-800 bg-slate-900 p-6">
+
+    <h1 class="mb-2 text-2xl font-bold">Edit Expense</h1>
+    <p class="mb-6 text-slate-400">
+        Update the expense details and save your changes.
+    </p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="mb-4 rounded-lg border px-4 py-3
+                {% if category == 'success' %}
+                    border-green-700 bg-green-950 text-green-200
+                {% else %}
+                    border-red-700 bg-red-950 text-red-200
+                {% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+    <form
+        method="POST"
+        action="{{ url_for('edit_expense', expense_id=expense.id) }}"
+        class="space-y-4">
+
+        <label class="block text-sm text-slate-300">
+            Description
+            <input
+                name="description"
+                type="text"
+                maxlength="200"
+                required
+                value="{{ expense.description }}"
+                class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white">
+        </label>
+
+        <label class="block text-sm text-slate-300">
+            Amount (₹)
+            <input
+                name="amount"
+                type="number"
+                min="0.01"
+                step="0.01"
+                required
+                value="{{ '%.2f'|format(expense.amount) }}"
+                class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white">
+        </label>
+
+        <label class="block text-sm text-slate-300">
+            Date
+            <input
+                name="date"
+                type="date"
+                required
+                value="{{ expense.date.isoformat() }}"
+                class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white">
+        </label>
+
+        <label class="block text-sm text-slate-300">
+            Category
+            <select
+                name="category"
+                required
+                class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white">
+                {% for category in categories %}
+                    <option
+                        value="{{ category }}"
+                        {% if expense.category == category %}selected{% endif %}>
+                        {{ category }}
+                    </option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <div class="flex gap-3 pt-2">
+            <button
+                type="submit"
+                class="rounded-lg bg-sky-500 px-5 py-2 font-semibold text-slate-950 hover:bg-sky-400">
+                Save Changes
+            </button>
+
+            <a
+                href="{{ url_for('index') }}"
+                class="rounded-lg border border-slate-700 px-5 py-2 hover:bg-slate-800">
+                Cancel
+            </a>
+        </div>
+    </form>
+</main>
+</body>
+</html>
